@@ -1,5 +1,10 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15100c">
 <title>Bites & Munch</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&display=swap">
@@ -24,6 +29,9 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+body { margin: 0; }
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
 body { background: var(--bg); color: var(--fg); font-family: var(--body); font-size: 16px; line-height: 1.55; padding-bottom: 88px; }
@@ -187,157 +195,214 @@ footer .logo { font-size: 1.2rem; }
 }
 </style>
 <style>
+/* app-style flow: one screen per step (menu → details → pay), primary action pinned to the bottom bar */
+.top-l { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .top-r { display: flex; align-items: center; gap: 10px; }
+.back { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: transparent; color: var(--fg); font-size: 1.1rem; cursor: pointer; display: grid; place-items: center; }
+.back:hover { border-color: var(--accent); }
 .lang { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
-.lang button { border: 0; background: transparent; color: var(--muted); font-family: var(--mono); font-size: .75rem; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.lang button { border: 0; background: transparent; color: var(--muted); font-family: var(--mono); font-size: .75rem; font-weight: 600; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
 .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
-@media (max-width: 560px) { .logo small { display: none; } .cart-btn .num { display: none; } }
+
+.narrow { max-width: 600px; }
+.vpad { padding-block: 20px 140px; }
+.steps { list-style: none; display: flex; gap: 8px; padding: 0; margin: 0 0 22px; }
+.steps li { flex: 1; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 8px; border-top: 3px solid var(--line); }
+.steps li.done { border-color: var(--accent); }
+.steps li.on { border-color: var(--accent); color: var(--fg); }
+.vtitle { font-size: 1.9rem; margin-bottom: 16px; }
+.subhead { font-size: 1.15rem; margin: 26px 0 12px; }
+
+.cart-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ci { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px; }
+.ci img { width: 60px; height: 60px; object-fit: cover; object-position: center 68%; border-radius: 10px; display: block; }
+.ci .nm { font-weight: 600; line-height: 1.25; }
+.ci .pr { color: var(--muted); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.ci .stepper button { width: 36px; height: 36px; }
+.add-more { margin-top: 10px; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 14px; padding: 12px; width: 100%; cursor: pointer; font-weight: 600; }
+.add-more:hover { border-color: var(--accent); color: var(--fg); }
+.sum-row { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 1.1rem; padding: 16px 4px 0; }
+.sum-row b { color: var(--accent-hi); font-size: 1.35rem; font-variant-numeric: tabular-nums; }
+.narrow .fields { grid-template-columns: 1fr; }
+.empty-state { text-align: center; padding: 40px 16px; color: var(--muted); display: grid; gap: 16px; justify-items: center; }
+
+.pay-card { text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 22px 18px; }
+.pay-card .amount { font-size: 2.4rem; font-weight: 800; margin-top: 4px; }
+.pay-card .qr { max-width: 250px; margin: 18px auto 10px; }
+.qr-actions { display: flex; justify-content: center; }
+.tip { font-size: .86rem; color: var(--muted); background: var(--raise); border-radius: 12px; padding: 10px 12px; margin-top: 14px; text-align: left; }
+.pay-card .kv { text-align: left; }
+
+.bar .btn { padding: 13px 20px; }
+.bar-wide .btn { flex: 1; }
+.bar .wa { margin-top: 0; width: auto; }
+
+@media (max-width: 760px) {
+  .hero .wrap { padding-block: 22px 4px; }
+  .hero-art, .hero-cta, .facts { display: none; }
+  .hero h1 { font-size: 2.1rem; margin-top: 8px; }
+  .hero .lede { font-size: .98rem; margin-top: 10px; }
+  #menu .wrap { padding-block: 18px 24px; }
+  .section-head { margin-bottom: 14px; }
+  .section-head h2 { font-size: 1.6rem; }
+  .card-art { width: 116px; min-height: 0; }
+  .card-body { padding: 12px 14px 12px 2px; gap: 4px; }
+  .card h3 { font-size: 1.08rem; }
+  .card .desc { font-size: .84rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .card-foot { padding-top: 8px; }
+  .price { font-size: 1.15rem; }
+  .add { padding: 9px 16px; }
+  .stepper button { width: 36px; height: 36px; }
+}
+@media (max-width: 560px) { .logo small, .cart-btn { display: none; } .logo { font-size: 1.15rem; } }
+html { -webkit-text-size-adjust: 100%; }
 </style>
 
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top" id="top">Bites &amp; Munch <small>A taste of true indulgence</small></a>
+    <div class="top-l">
+      <button class="back" id="back" type="button" hidden>←</button>
+      <a class="logo" href="#top" id="top">Bites &amp; Munch <small>A taste of true indulgence</small></a>
+    </div>
     <div class="top-r">
       <div class="lang" role="group" aria-label="Language / Bahasa">
         <button type="button" data-lang="en" aria-pressed="true">EN</button>
         <button type="button" data-lang="ms" aria-pressed="false">BM</button>
       </div>
-      <a class="cart-btn" href="#checkout"><span data-i18n="cart">Cart</span> <span class="count" id="hCount">0</span> <span class="num" id="hTotal">RM0.00</span></a>
+      <a class="cart-btn" href="#" id="cartBtn"><span data-i18n="cart"></span> <span class="count" id="hCount">0</span> <span class="num" id="hTotal">RM0.00</span></a>
     </div>
   </div>
 </header>
 
 <main>
-  <section class="hero">
-    <div class="wrap">
-      <div>
-        <p class="eyebrow" data-i18n="eyebrow">Bites &amp; Munch · cookies in a jar</p>
-        <h1>A taste of true <em>indulgence</em>.</h1>
-        <p class="lede" data-i18n="lede"></p>
-        <div class="hero-cta">
-          <a class="btn btn-primary" href="#menu" data-i18n="ctaMenu"></a>
-          <a class="btn btn-ghost" href="#checkout" data-i18n="ctaPay"></a>
-        </div>
-        <div class="facts">
-          <div><b>Nett 300g</b><span data-i18n="fact1"></span></div>
-          <div><b>30 pcs</b><span data-i18n="fact2"></span></div>
-          <div><b>Belgian</b><span data-i18n="fact3"></span></div>
-        </div>
-      </div>
-      <div class="hero-art">
-        <img class="p1" src="gambar/chocchip.jpg" alt="Original Chocolate Chip">
-        <img class="p2" src="gambar/pecan.jpg" alt="Blackout Pecan Cookies">
-        <img class="p3" src="gambar/almond.jpg" alt="Almond Choco-Cluster">
-      </div>
-    </div>
-  </section>
-
-  <section id="menu">
-    <div class="wrap">
-      <div class="section-head">
+  <!-- STEP 1: menu -->
+  <div class="view" id="v-menu">
+    <section class="hero">
+      <div class="wrap">
         <div>
-          <p class="eyebrow">Menu</p>
-          <h2 data-i18n="menuTitle"></h2>
-        </div>
-        <p data-i18n="menuSub"></p>
-      </div>
-      <div class="grid" id="grid"></div>
-    </div>
-  </section>
-
-  <section id="checkout">
-    <div class="wrap">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow">Checkout</p>
-          <h2 data-i18n="coTitle"></h2>
-        </div>
-        <p data-i18n="coSub"></p>
-      </div>
-
-      <div class="co-grid">
-        <div>
-          <form class="panel" id="form" novalidate>
-            <div class="step-title"><span class="n">1</span><h3 data-i18n="step1"></h3></div>
-            <div class="fields">
-              <div class="field" id="f-nama">
-                <label for="nama" data-i18n="nameLabel"></label>
-                <input id="nama" name="nama" autocomplete="name" data-i18n-ph="namePh">
-                <span class="err" hidden data-i18n="nameErr"></span>
-              </div>
-              <div class="field" id="f-telefon">
-                <label for="telefon" data-i18n="phoneLabel"></label>
-                <input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" data-i18n-ph="phonePh">
-                <span class="err" hidden data-i18n="phoneErr"></span>
-              </div>
-              <div class="field full">
-                <label for="nota" data-i18n="noteLabel"></label>
-                <input id="nota" name="nota" data-i18n-ph="notePh">
-              </div>
-            </div>
-            <div class="form-actions">
-              <button class="btn btn-primary" type="submit" id="proceed" data-i18n="proceed"></button>
-              <span class="form-msg" id="formMsg" role="alert"></span>
-            </div>
-          </form>
-
-          <div class="panel pay" id="pay" hidden>
-            <div class="step-title"><span class="n">2</span><h3 data-i18n="step2"></h3></div>
-            <div class="pay-grid">
-              <div>
-                <div class="qr"><img src="gambar/qr.png" alt="DuitNow QR Bites &amp; Munch"></div>
-                <p class="qr-cap" data-i18n="qrCap"></p>
-              </div>
-              <div>
-                <p class="eyebrow" data-i18n="amountDue"></p>
-                <p class="amount" id="payAmount">RM0.00</p>
-                <div class="kv">
-                  <div class="kv-row"><span data-i18n="refLabel"></span><b id="payRef">—</b><button class="copy" type="button" data-copy="ref" data-i18n="copy"></button></div>
-                  <div class="kv-row"><span>Bank</span><b id="bankName"></b></div>
-                  <div class="kv-row"><span data-i18n="holder"></span><b id="bankHolder"></b></div>
-                  <div class="kv-row" id="accRow"><span data-i18n="acc"></span><b id="bankAcc"></b><button class="copy" type="button" data-copy="acc" data-i18n="copy"></button></div>
-                </div>
-              </div>
-            </div>
-            <ol class="howto">
-              <li data-i18n="how1"></li>
-              <li data-i18n="how2"></li>
-              <li data-i18n="how3"></li>
-            </ol>
-            <a class="btn wa" id="waBtn" href="#" target="_blank" rel="noopener" data-i18n="waBtn"></a>
-            <details class="fallback">
-              <summary data-i18n="fbSum"></summary>
-              <pre id="orderText"></pre>
-              <button class="copy" type="button" data-copy="order" data-i18n="copyOrder"></button>
-              <p style="margin-top:8px" data-i18n="fbSend"></p>
-            </details>
+          <p class="eyebrow" data-i18n="eyebrow"></p>
+          <h1>A taste of true <em>indulgence</em>.</h1>
+          <p class="lede" data-i18n="lede"></p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#menu" data-i18n="ctaMenu"></a>
+          </div>
+          <div class="facts">
+            <div><b>Nett 300g</b><span data-i18n="fact1"></span></div>
+            <div><b>30 pcs</b><span data-i18n="fact2"></span></div>
+            <div><b>Belgian</b><span data-i18n="fact3"></span></div>
           </div>
         </div>
-
-        <aside class="panel receipt" data-i18n-aria="summary">
-          <h3 data-i18n="yourOrder"></h3>
-          <p class="rid" id="rid"></p>
-          <ul class="lines" id="lines"></ul>
-          <p class="empty" id="empty" data-i18n="empty"></p>
-          <div class="totals">
-            <div class="grand"><span data-i18n="total"></span><b id="tTotal">RM0.00</b></div>
+        <div class="hero-art">
+          <img class="p1" src="gambar/chocchip.jpg" alt="Original Chocolate Chip">
+          <img class="p2" src="gambar/pecan.jpg" alt="Blackout Pecan Cookies">
+          <img class="p3" src="gambar/almond.jpg" alt="Almond Choco-Cluster">
+        </div>
+      </div>
+    </section>
+    <section id="menu">
+      <div class="wrap">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Menu</p>
+            <h2 data-i18n="menuTitle"></h2>
           </div>
-        </aside>
+          <p data-i18n="menuSub"></p>
+        </div>
+        <div class="grid" id="grid"></div>
+      </div>
+    </section>
+    <footer>
+      <div class="wrap">
+        <span class="logo">Bites &amp; Munch</span>
+        <span>WhatsApp <span class="num wa-num"></span></span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- STEP 2: cart + details -->
+  <div class="view" id="v-details" hidden>
+    <div class="wrap narrow vpad">
+      <ol class="steps"><li class="done">Menu</li><li class="on" data-i18n="stepDetails"></li><li data-i18n="stepPay"></li></ol>
+      <h2 class="vtitle" data-i18n="yourOrder"></h2>
+      <div id="detailsBody">
+        <ul class="cart-list" id="cartList"></ul>
+        <button class="add-more" type="button" id="addMore" data-i18n="addMore"></button>
+        <div class="sum-row"><span data-i18n="total"></span><b id="tTotal">RM0.00</b></div>
+
+        <h3 class="subhead" data-i18n="yourDetails"></h3>
+        <form id="form" novalidate>
+          <div class="fields">
+            <div class="field" id="f-nama">
+              <label for="nama" data-i18n="nameLabel"></label>
+              <input id="nama" name="nama" autocomplete="name" data-i18n-ph="namePh">
+              <span class="err" hidden data-i18n="nameErr"></span>
+            </div>
+            <div class="field" id="f-telefon">
+              <label for="telefon" data-i18n="phoneLabel"></label>
+              <input id="telefon" name="telefon" type="tel" inputmode="tel" autocomplete="tel" data-i18n-ph="phonePh">
+              <span class="err" hidden data-i18n="phoneErr"></span>
+            </div>
+            <div class="field">
+              <label for="nota" data-i18n="noteLabel"></label>
+              <input id="nota" name="nota" data-i18n-ph="notePh">
+            </div>
+          </div>
+          <p class="form-msg" id="formMsg" role="alert" style="margin-top:12px"></p>
+        </form>
+      </div>
+      <div class="empty-state" id="emptyState" hidden>
+        <p data-i18n="empty"></p>
+        <button class="btn btn-primary" type="button" data-go="menu" data-i18n="backMenu"></button>
       </div>
     </div>
-  </section>
+  </div>
+
+  <!-- STEP 3: pay -->
+  <div class="view" id="v-pay" hidden>
+    <div class="wrap narrow vpad">
+      <ol class="steps"><li class="done">Menu</li><li class="done" data-i18n="stepDetails"></li><li class="on" data-i18n="stepPay"></li></ol>
+      <h2 class="vtitle" data-i18n="payTitle"></h2>
+      <div class="pay-card">
+        <p class="eyebrow" data-i18n="amountDue"></p>
+        <p class="amount" id="payAmount">RM0.00</p>
+        <div class="qr"><img src="gambar/qr.png" alt="DuitNow QR Bites &amp; Munch"></div>
+        <div class="qr-actions">
+          <a class="btn btn-ghost" href="gambar/qr.png" download="BitesMunch-DuitNow-QR.png" data-i18n="saveQR"></a>
+        </div>
+        <p class="tip" data-i18n="tip"></p>
+        <div class="kv">
+          <div class="kv-row"><span data-i18n="refLabel"></span><b id="payRef">—</b><button class="copy" type="button" data-copy="ref" data-i18n="copy"></button></div>
+          <div class="kv-row"><span data-i18n="holder"></span><b id="bankHolder"></b></div>
+          <div class="kv-row"><span>Bank</span><b id="bankName"></b></div>
+          <div class="kv-row" id="accRow"><span data-i18n="acc"></span><b id="bankAcc"></b><button class="copy" type="button" data-copy="acc" data-i18n="copy"></button></div>
+        </div>
+      </div>
+      <ol class="howto">
+        <li data-i18n="how1"></li>
+        <li data-i18n="how2"></li>
+        <li data-i18n="how3"></li>
+      </ol>
+      <details class="fallback">
+        <summary data-i18n="fbSum"></summary>
+        <pre id="orderText"></pre>
+        <button class="copy" type="button" data-copy="order" data-i18n="copyOrder"></button>
+        <p style="margin-top:8px" data-i18n="fbSend"></p>
+      </details>
+    </div>
+  </div>
 </main>
 
-<footer>
-  <div class="wrap">
-    <span class="logo">Bites &amp; Munch</span>
-    <span>WhatsApp <span class="num wa-num"></span></span>
-  </div>
-</footer>
-
-<div class="bar" id="bar" hidden>
+<!-- bottom action bars, one per step -->
+<div class="bar" id="bar-menu" hidden>
   <div class="sum"><span id="barCount"></span><b id="barTotal">RM0.00</b></div>
-  <a class="btn btn-primary" href="#checkout">Checkout</a>
+  <button class="btn btn-primary" type="button" data-go="details" data-i18n="checkout"></button>
+</div>
+<div class="bar" id="bar-details" hidden>
+  <div class="sum"><span data-i18n="total"></span><b id="barTotal2">RM0.00</b></div>
+  <button class="btn btn-primary" type="submit" form="form" data-i18n="proceed"></button>
+</div>
+<div class="bar bar-wide" id="bar-pay" hidden>
+  <a class="btn wa" id="waBtn" href="#" target="_blank" rel="noopener" data-i18n="waBtn"></a>
 </div>
 <div class="toast" id="toast" role="status"></div>
 
@@ -367,54 +432,52 @@ const PRODUCTS = [
 
 const I18N = {
   en: {
-    cart: "Cart", eyebrow: "Bites &amp; Munch · cookies in a jar",
-    lede: "Three flavours made with Belgian chocolate chips and real butter. A treat for yourself or a gift for someone else. Choose, pay with DuitNow, done.",
-    ctaMenu: "Choose cookies", ctaPay: "How to pay",
-    fact1: "cookies per jar", fact2: "choco-clusters per jar", fact3: "chocolate chips",
+    cart: "Cart", back: "Back", eyebrow: "Bites &amp; Munch · cookies in a jar",
+    lede: "Three flavours made with Belgian chocolate chips and real butter. A treat for yourself or a gift for someone else.",
+    ctaMenu: "Choose cookies", fact1: "cookies per jar", fact2: "choco-clusters per jar", fact3: "chocolate chips",
     menuTitle: "Pick your flavours", menuSub: "Tap Add. Mix and match as you like.",
-    coTitle: "Complete your order", coSub: "Two steps: fill in your details, then pay and send your order to us on WhatsApp.",
-    step1: "Your details", nameLabel: "Full name", namePh: "e.g. Aisyah Rahman", nameErr: "Please enter your name.",
+    checkout: "Checkout →", stepDetails: "Details", stepPay: "Pay",
+    yourOrder: "Your order", addMore: "+ Add more flavours", total: "Total", yourDetails: "Your details",
+    nameLabel: "Full name", namePh: "e.g. Aisyah Rahman", nameErr: "Please enter your name.",
     phoneLabel: "Phone number", phonePh: "e.g. 012-345 6789", phoneErr: "Enter a valid phone number (10–11 digits).",
     noteLabel: "Note (optional)", notePh: "e.g. Pick up Saturday afternoon",
-    proceed: "Continue to payment", step2: "Pay with DuitNow", qrCap: "Scan with any banking or e-wallet app",
-    amountDue: "Amount to pay", refLabel: "Order no. (use as reference)", holder: "Account name", acc: "Account no.", copy: "Copy",
-    how1: "Scan the QR with your banking or e-wallet app and pay the <b>exact amount</b>.",
-    how2: "Put the <b>order no.</b> in the reference field.",
-    how3: "Tap the green button. WhatsApp opens with your order. Attach your <b>receipt screenshot</b> and tap Send.",
+    proceed: "Continue to pay →", empty: "Your cart is empty.", backMenu: "Back to menu",
+    payTitle: "Pay with DuitNow", amountDue: "Amount to pay", saveQR: "Save QR to phone",
+    tip: "Paying from this phone? Save the QR, open your bank app, tap Scan and pick the QR from your gallery.",
+    refLabel: "Order no. (use as reference)", holder: "Account name", acc: "Account no.", copy: "Copy",
+    how1: "Pay the <b>exact amount</b> by scanning the QR.",
+    how2: "Put the <b>order no.</b> in the payment reference.",
+    how3: "Tap the green button below. WhatsApp opens with your order. Attach your <b>receipt screenshot</b> and tap Send.",
     waBtn: "Paid · Send order on WhatsApp", fbSum: "WhatsApp didn't open? Copy your order manually",
     copyOrder: "Copy order text", fbSend: 'Send it to WhatsApp <b class="num wa-num"></b> with your receipt.',
-    summary: "Order summary", yourOrder: "Your order", empty: "Your cart is empty. Pick a flavour from the menu above.", total: "Total",
-    add: "Add", perJar: "/jar", code: "Code", remove: "Remove", less: "Remove one", more: "Add one",
-    jars: n => n + (n === 1 ? " jar" : " jars"), added: name => name + " added to cart",
-    noRef: "No order number yet", ref: "Order no. ",
-    errEmpty: "Your cart is empty. Add at least one jar.", errFields: "Check the fields marked in red.",
-    copied: "Copied", selected: "Text selected, copy it now",
+    add: "Add", perJar: "/jar", code: "Code", less: "Remove one", more: "Add one",
+    jars: n => n + (n === 1 ? " jar" : " jars"), added: name => name + " added",
+    errFields: "Check the fields marked in red.", copied: "Copied", selected: "Text selected, copy it now",
     msg: { hi: "Hi Bites & Munch, I'd like to place an order.", no: "Order no.", name: "Name", phone: "Phone",
            order: "Order", total: "TOTAL", note: "Note", paid: "I've paid via DuitNow. Receipt attached." }
   },
   ms: {
-    cart: "Troli", eyebrow: "Bites &amp; Munch · cookies balang",
-    lede: "Tiga perisa, dibuat dengan chip coklat Belgium dan butter tulen. Sedap untuk dimakan sendiri atau dijadikan hadiah. Pilih, bayar DuitNow, siap.",
-    ctaMenu: "Pilih cookies", ctaPay: "Cara bayar",
-    fact1: "cookies setiap balang", fact2: "choco-cluster setiap balang", fact3: "chip coklat",
+    cart: "Troli", back: "Kembali", eyebrow: "Bites &amp; Munch · cookies balang",
+    lede: "Tiga perisa, dibuat dengan chip coklat Belgium dan butter tulen. Sedap untuk dimakan sendiri atau dijadikan hadiah.",
+    ctaMenu: "Pilih cookies", fact1: "cookies setiap balang", fact2: "choco-cluster setiap balang", fact3: "chip coklat",
     menuTitle: "Pilih perisa kau", menuSub: "Tekan Tambah. Boleh campur perisa ikut suka.",
-    coTitle: "Lengkapkan order", coSub: "Dua langkah: isi butiran, lepas tu bayar dan hantar order ke WhatsApp kami.",
-    step1: "Butiran kau", nameLabel: "Nama penuh", namePh: "cth. Aisyah Rahman", nameErr: "Isi nama kau.",
+    checkout: "Checkout →", stepDetails: "Butiran", stepPay: "Bayar",
+    yourOrder: "Order kau", addMore: "+ Tambah perisa lain", total: "Jumlah", yourDetails: "Butiran kau",
+    nameLabel: "Nama penuh", namePh: "cth. Aisyah Rahman", nameErr: "Isi nama kau.",
     phoneLabel: "No. telefon", phonePh: "cth. 012-345 6789", phoneErr: "Masukkan no. telefon yang betul (10–11 digit).",
     noteLabel: "Nota (pilihan)", notePh: "cth. Nak ambil hari Sabtu petang",
-    proceed: "Teruskan ke bayaran", step2: "Bayar dengan DuitNow", qrCap: "Scan guna app bank atau e-wallet",
-    amountDue: "Jumlah perlu dibayar", refLabel: "No. order (letak sebagai rujukan)", holder: "Nama akaun", acc: "No. akaun", copy: "Salin",
-    how1: "Scan QR guna app bank atau e-wallet, bayar <b>jumlah tepat</b>.",
+    proceed: "Teruskan ke bayaran →", empty: "Troli kosong.", backMenu: "Kembali ke menu",
+    payTitle: "Bayar dengan DuitNow", amountDue: "Jumlah perlu dibayar", saveQR: "Simpan QR dalam phone",
+    tip: "Bayar guna phone ni? Simpan QR, buka app bank, tekan Scan dan pilih QR dari galeri.",
+    refLabel: "No. order (letak sebagai rujukan)", holder: "Nama akaun", acc: "No. akaun", copy: "Salin",
+    how1: "Bayar <b>jumlah tepat</b> dengan scan QR.",
     how2: "Letak <b>no. order</b> dalam ruangan rujukan.",
-    how3: "Tekan butang hijau. WhatsApp akan buka dengan order kau, <b>lampirkan screenshot resit</b> dan tekan Send.",
-    waBtn: "Dah bayar · Hantar order ke WhatsApp", fbSum: "WhatsApp tak terbuka? Salin order secara manual",
+    how3: "Tekan butang hijau kat bawah. WhatsApp akan buka dengan order kau, <b>lampirkan screenshot resit</b> dan tekan Send.",
+    waBtn: "Dah bayar · Hantar ke WhatsApp", fbSum: "WhatsApp tak terbuka? Salin order secara manual",
     copyOrder: "Salin teks order", fbSend: 'Hantar ke WhatsApp <b class="num wa-num"></b> bersama resit.',
-    summary: "Ringkasan order", yourOrder: "Order kau", empty: "Troli kosong. Pilih perisa dalam menu kat atas.", total: "Jumlah",
-    add: "Tambah", perJar: "/balang", code: "Kod", remove: "Buang", less: "Kurangkan satu", more: "Tambah satu",
-    jars: n => n + " balang", added: name => name + " masuk troli",
-    noRef: "Belum ada no. order", ref: "No. order ",
-    errEmpty: "Troli masih kosong. Pilih sekurang-kurangnya satu balang.", errFields: "Semak ruangan yang bertanda merah.",
-    copied: "Disalin", selected: "Teks dah dipilih, tekan salin",
+    add: "Tambah", perJar: "/balang", code: "Kod", less: "Kurangkan satu", more: "Tambah satu",
+    jars: n => n + " balang", added: name => name + " ditambah",
+    errFields: "Semak ruangan yang bertanda merah.", copied: "Disalin", selected: "Teks dah dipilih, tekan salin",
     msg: { hi: "Salam Bites & Munch, saya nak order.", no: "No. order", name: "Nama", phone: "Telefon",
            order: "Order", total: "JUMLAH", note: "Nota", paid: "Saya dah bayar melalui DuitNow. Resit saya lampirkan." }
   }
@@ -425,6 +488,7 @@ const fmt = n => "RM" + n.toFixed(2);
 let cart = {};
 let orderId = null;
 let lang = "en";
+let view = "menu";
 
 try {
   const saved = JSON.parse(localStorage.getItem("dk-cart") || "{}");
@@ -434,7 +498,13 @@ try {
 function save() { try { localStorage.setItem("dk-cart", JSON.stringify(cart)); } catch (e) {} }
 const T = () => I18N[lang];
 
-/* ---------- build UI ---------- */
+const stepper = p => `
+  <div class="stepper" data-id="${p.id}">
+    <button type="button" data-d="-1" aria-label="${T().less}: ${p.name}">−</button>
+    <output aria-live="polite">0</output>
+    <button type="button" data-d="1" aria-label="${T().more}: ${p.name}">+</button>
+  </div>`;
+
 function buildGrid() {
   const t = T();
   $("#grid").innerHTML = PRODUCTS.map(p => `
@@ -446,26 +516,41 @@ function buildGrid() {
       <p class="spec">${p.spec}</p>
       <div class="card-foot">
         <span class="price">RM${p.price}<small> ${t.perJar}</small></span>
-        <button class="add" type="button">${t.add}</button>
-        <div class="stepper" hidden>
-          <button type="button" data-d="-1" aria-label="${t.less}: ${p.name}">−</button>
-          <output aria-live="polite">0</output>
-          <button type="button" data-d="1" aria-label="${t.more}: ${p.name}">+</button>
-        </div>
+        <button class="add" type="button" data-add="${p.id}">${t.add}</button>
+        ${stepper(p)}
       </div>
     </div>
   </article>`).join("");
 }
 
+/* ---------- navigation ---------- */
+function go(v, push = true) {
+  if (v === "pay" && (!orderId || !totals().qty)) v = "details";
+  view = v;
+  for (const id of ["menu", "details", "pay"]) $("#v-" + id).hidden = id !== v;
+  $("#back").hidden = v === "menu";
+  $("#cartBtn").hidden = v !== "menu";
+  if (push) history.pushState({ v }, "");
+  window.scrollTo(0, 0);
+  render();
+}
+try { history.replaceState({ v: "menu" }, ""); } catch (e) {}
+window.addEventListener("popstate", e => go((e.state && e.state.v) || "menu", false));
+$("#back").addEventListener("click", () => history.back());
+$("#cartBtn").addEventListener("click", e => { e.preventDefault(); go("details"); });
+$("#addMore").addEventListener("click", () => go("menu"));
+document.addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(b.dataset.go); });
+
+/* ---------- language ---------- */
 function applyLang() {
   const t = T();
   document.documentElement.lang = lang === "ms" ? "ms" : "en";
   document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = t[el.dataset.i18n]; });
   document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = t[el.dataset.i18nPh]; });
-  document.querySelectorAll("[data-i18n-aria]").forEach(el => { el.setAttribute("aria-label", t[el.dataset.i18nAria]); });
   document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
   document.querySelectorAll(".wa-num").forEach(el => { el.textContent = CONFIG.whatsappDisplay; });
-  if ($("#formMsg").textContent) $("#formMsg").textContent = "";
+  $("#back").setAttribute("aria-label", t.back);
+  $("#formMsg").textContent = "";
   buildGrid();
   render();
 }
@@ -481,20 +566,17 @@ $("#bankHolder").textContent = CONFIG.bank.holder;
 $("#bankAcc").textContent = CONFIG.bank.acc;
 $("#accRow").hidden = !CONFIG.bank.acc;
 
+/* ---------- cart ---------- */
 function setQty(id, q) {
   q = Math.max(0, Math.min(99, q));
   if (q) cart[id] = q; else delete cart[id];
   save(); render();
 }
-$("#grid").addEventListener("click", e => {
-  const card = e.target.closest(".card"); if (!card) return;
-  const id = card.dataset.id, cur = cart[id] || 0;
-  if (e.target.closest(".add")) { setQty(id, 1); toast(T().added(PRODUCTS.find(p => p.id === id).name)); }
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-add]");
+  if (a) { setQty(a.dataset.add, 1); toast(T().added(PRODUCTS.find(p => p.id === a.dataset.add).name)); return; }
   const d = e.target.closest("[data-d]");
-  if (d) setQty(id, cur + Number(d.dataset.d));
-});
-$("#lines").addEventListener("click", e => {
-  const b = e.target.closest("[data-rm]"); if (b) setQty(b.dataset.rm, 0);
+  if (d) { const id = d.closest(".stepper").dataset.id; setQty(id, (cart[id] || 0) + Number(d.dataset.d)); }
 });
 ["nama", "telefon", "nota"].forEach(id => $("#" + id).addEventListener("input", () => {
   $("#f-" + id)?.classList.remove("bad");
@@ -513,15 +595,7 @@ function phoneOk(v) { const d = v.replace(/\D/g, ""); return d.length >= 10 && d
 function orderMessage(t) {
   const m = T().msg;
   const v = id => $("#" + id).value.trim();
-  const lines = [
-    m.hi,
-    ``,
-    `${m.no}: ${orderId}`,
-    `${m.name}: ${v("nama")}`,
-    `${m.phone}: ${v("telefon")}`,
-    ``,
-    `${m.order}:`
-  ];
+  const lines = [m.hi, ``, `${m.no}: ${orderId}`, `${m.name}: ${v("nama")}`, `${m.phone}: ${v("telefon")}`, ``, `${m.order}:`];
   t.items.forEach(i => lines.push(`- ${i.qty} x (${i.id}) ${i.name} = ${fmt(i.amt)}`));
   lines.push(``, `${m.total}: ${fmt(t.total)}`);
   if (v("nota")) lines.push(``, `${m.note}: ${v("nota")}`);
@@ -531,26 +605,31 @@ function orderMessage(t) {
 
 function render() {
   const t = totals(), L = T();
-  document.querySelectorAll(".card").forEach(card => {
-    const q = cart[card.dataset.id] || 0;
-    card.classList.toggle("in-cart", q > 0);
-    card.querySelector(".add").hidden = q > 0;
-    card.querySelector(".stepper").hidden = q === 0;
-    card.querySelector("output").textContent = q;
+  document.querySelectorAll("[data-add]").forEach(b => { b.hidden = (cart[b.dataset.add] || 0) > 0; });
+  document.querySelectorAll(".card").forEach(c => c.classList.toggle("in-cart", (cart[c.dataset.id] || 0) > 0));
+  $("#cartList").innerHTML = t.items.map(i => `
+    <li class="ci"><img src="${i.img}" alt="">
+      <div><div class="nm">${i.name}</div><div class="pr">RM${i.price} ${L.perJar} · ${fmt(i.amt)}</div></div>
+      ${stepper(i)}
+    </li>`).join("");
+  document.querySelectorAll(".stepper").forEach(s => {
+    const q = cart[s.dataset.id] || 0;
+    s.querySelector("output").textContent = q;
+    if (s.closest(".card")) s.hidden = q === 0;
   });
-  $("#lines").innerHTML = t.items.map(i => `
-    <li><span class="q">${i.qty}×</span><span>${i.name}</span><span class="a">${fmt(i.amt)}</span>
-    <button class="rm" type="button" data-rm="${i.id}">${L.remove}</button></li>`).join("");
-  $("#empty").hidden = t.items.length > 0;
+  const empty = t.qty === 0;
+  $("#detailsBody").hidden = empty;
+  $("#emptyState").hidden = !empty;
   $("#tTotal").textContent = fmt(t.total);
   $("#hCount").textContent = t.qty;
   $("#hTotal").textContent = fmt(t.total);
-  $("#bar").hidden = t.qty === 0;
   $("#barCount").textContent = L.jars(t.qty);
   $("#barTotal").textContent = fmt(t.total);
-  $("#rid").textContent = orderId ? L.ref + orderId : L.noRef;
-  if (!$("#pay").hidden) {
-    if (!t.qty) { $("#pay").hidden = true; return; }
+  $("#barTotal2").textContent = fmt(t.total);
+  $("#bar-menu").hidden = !(view === "menu" && !empty);
+  $("#bar-details").hidden = !(view === "details" && !empty);
+  $("#bar-pay").hidden = view !== "pay";
+  if (view === "pay" && orderId && !empty) {
     $("#payAmount").textContent = fmt(t.total);
     $("#payRef").textContent = orderId;
     const msg = orderMessage(t);
@@ -561,21 +640,17 @@ function render() {
 
 $("#form").addEventListener("submit", e => {
   e.preventDefault();
-  const t = totals();
   let ok = true;
   const mark = (id, bad) => { $("#f-" + id).classList.toggle("bad", bad); $("#f-" + id + " .err").hidden = !bad; if (bad) ok = false; };
   mark("nama", !$("#nama").value.trim());
   mark("telefon", !phoneOk($("#telefon").value));
-  if (!t.qty) { $("#formMsg").textContent = T().errEmpty; return; }
-  if (!ok) { $("#formMsg").textContent = T().errFields; return; }
+  if (!ok) { $("#formMsg").textContent = T().errFields; ($(".field.bad input") || {}).focus?.(); return; }
   $("#formMsg").textContent = "";
   if (!orderId) {
     const d = new Date();
     orderId = "BM-" + String(d.getDate()).padStart(2, "0") + String(d.getMonth() + 1).padStart(2, "0") + "-" + (100 + Math.floor(Math.random() * 900));
   }
-  $("#pay").hidden = false;
-  render();
-  $("#pay").scrollIntoView({ block: "start" });
+  go("pay");
 });
 
 document.addEventListener("click", async e => {
