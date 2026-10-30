@@ -126,17 +126,17 @@ button, input, textarea { font: inherit; color: inherit; }
 .qr img { width: 100%; display: block; }
 .qr-cap { text-align: center; color: var(--muted); font-size: .78rem; margin-top: 8px; }
 .amount { font-family: var(--mono); font-size: 2rem; color: var(--accent-hi); line-height: 1.1; }
-.kv { display: grid; gap: 10px; margin-top: 16px; }
-.kv-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
-.kv-row span { color: var(--muted); font-size: .85rem; }
+.kv { display: grid; gap: 12px; margin-top: 16px; }
+.kv-row { display: flex; align-items: center; gap: 12px; border-bottom: 1px dashed var(--line); padding-bottom: 12px; }
+.kv-row span { color: var(--muted); font-size: .85rem; flex: 1; min-width: 0; text-align: left; }
 .kv-row b { font-family: var(--mono); font-weight: 500; text-align: right; overflow-wrap: anywhere; }
 .copy { background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: .75rem; cursor: pointer; color: var(--muted); flex: none; }
 .copy:hover { border-color: var(--accent); color: var(--fg); }
-.howto { margin: 20px 0 0; padding-left: 20px; display: grid; gap: 6px; color: var(--muted); font-size: .92rem; }
+.howto { margin: 24px 0 0; padding-left: 22px; display: grid; gap: 8px; color: var(--muted); font-size: .92rem; }
 .howto b { color: var(--fg); }
 .wa { margin-top: 20px; width: 100%; background: #2fbf71; color: #08150d; }
 .wa:hover { background: #45d486; }
-.fallback { margin-top: 14px; font-size: .85rem; color: var(--muted); }
+.fallback { margin-top: 20px; font-size: .85rem; color: var(--muted); }
 .fallback summary { cursor: pointer; }
 .fallback pre { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 12px; font-family: var(--mono); font-size: .78rem; color: var(--fg); margin: 10px 0; user-select: all; }
 
@@ -205,13 +205,13 @@ footer .logo { font-size: 1.2rem; }
 .lang button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
 
 .narrow { max-width: 600px; }
-.vpad { padding-block: 20px 140px; }
-.steps { list-style: none; display: flex; gap: 8px; padding: 0; margin: 0 0 22px; }
+.vpad { padding-block: 24px 140px; }
+.steps { list-style: none; display: flex; gap: 8px; padding: 0; margin: 0 0 24px; }
 .steps li { flex: 1; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 8px; border-top: 3px solid var(--line); }
 .steps li.done { border-color: var(--accent); }
 .steps li.on { border-color: var(--accent); color: var(--fg); }
-.vtitle { font-size: 1.9rem; margin-bottom: 16px; }
-.subhead { font-size: 1.15rem; margin: 26px 0 12px; }
+.vtitle { font-size: 1.9rem; margin-bottom: 20px; }
+.subhead { font-size: 1.15rem; margin: 32px 0 16px; }
 
 .cart-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .ci { display: grid; grid-template-columns: 60px minmax(0, 1fr) auto; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px; }
@@ -221,16 +221,17 @@ footer .logo { font-size: 1.2rem; }
 .ci .stepper button { width: 36px; height: 36px; }
 .add-more { margin-top: 10px; background: transparent; border: 1px dashed var(--line); color: var(--muted); border-radius: 14px; padding: 12px; width: 100%; cursor: pointer; font-weight: 600; }
 .add-more:hover { border-color: var(--accent); color: var(--fg); }
-.sum-row { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 1.1rem; padding: 16px 4px 0; }
+.sum-row { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; font-size: 1.1rem; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--line); }
 .sum-row b { color: var(--accent-hi); font-size: 1.35rem; font-variant-numeric: tabular-nums; }
 .narrow .fields { grid-template-columns: 1fr; }
 .empty-state { text-align: center; padding: 40px 16px; color: var(--muted); display: grid; gap: 16px; justify-items: center; }
 
 .pay-card { text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 22px 18px; }
 .pay-card .amount { font-size: 2.4rem; font-weight: 800; margin-top: 4px; }
-.pay-card .qr { max-width: 250px; margin: 18px auto 10px; }
+.pay-card .qr { max-width: 250px; margin: 20px auto 16px; }
+.pay-card .kv { margin-top: 20px; }
 .qr-actions { display: flex; justify-content: center; }
-.tip { font-size: .86rem; color: var(--muted); background: var(--raise); border-radius: 12px; padding: 10px 12px; margin-top: 14px; text-align: left; }
+.tip { font-size: .86rem; color: var(--muted); background: var(--raise); border-radius: 12px; padding: 12px 14px; margin-top: 16px; text-align: left; }
 .pay-card .kv { text-align: left; }
 
 .bar .btn { padding: 13px 20px; }
@@ -241,15 +242,15 @@ footer .logo { font-size: 1.2rem; }
   .hero .wrap { padding-block: 22px 4px; }
   .hero-art, .hero-cta, .facts { display: none; }
   .hero h1 { font-size: 2.1rem; margin-top: 8px; }
-  .hero .lede { font-size: .98rem; margin-top: 10px; }
+  .hero .lede { font-size: .98rem; margin-top: 12px; }
   #menu .wrap { padding-block: 18px 24px; }
-  .section-head { margin-bottom: 14px; }
+  .section-head { margin-bottom: 16px; gap: 8px; }
   .section-head h2 { font-size: 1.6rem; }
   .card-art { width: 116px; min-height: 0; }
-  .card-body { padding: 12px 14px 12px 2px; gap: 4px; }
+  .card-body { padding: 14px 16px; gap: 6px; }
   .card h3 { font-size: 1.08rem; }
   .card .desc { font-size: .84rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-  .card-foot { padding-top: 8px; }
+  .card-foot { padding-top: 10px; }
   .price { font-size: 1.15rem; }
   .add { padding: 9px 16px; }
   .stepper button { width: 36px; height: 36px; }
